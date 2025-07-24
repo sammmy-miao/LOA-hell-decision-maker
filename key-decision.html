@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>钥匙决策器 - 随机选择生成器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- 配置Tailwind自定义颜色和字体 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            blueKey: '#3B82F6',   // 蓝钥匙
+            purpleKey: '#8B5CF6', // 紫钥匙
+            goldKey: '#F59E0B',   // 金钥匙
+            left: '#10B981',      // 左 - 绿色
+            right: '#F59E0B',     // 右 - 黄色
+            accent: '#8B5CF6',
+            neutral: '#1F2937',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .animate-pulse-slow {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      .key-hover {
+        transition: all 0.3s ease;
+      }
+      
+      .key-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+    
+          .bg-gradient-custom {
+        /* 原渐变背景改为透明，避免遮挡背景图 */
+        background: transparent; 
+      }
+
+      /* 新增背景图样式，覆盖整个页面 */
+      body {
+        /* 替换为你的图片实际链接，这里用示例地址，可改成自己的 */
+        background: url('https://cdn-lostark.game.onstove.com/uploadfiles/banner/d7ad1b3cf22c48bb9e8a7b68bf57a99e.jpg') no-repeat center center fixed; 
+        background-size: cover; 
+      }
+
+
+    
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4 font-sans text-neutral bg-gray-50">
+  <!-- 页面容器 -->
+  <div class="max-w-lg w-full bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+    <!-- 标题区域 -->
+    <div class="bg-primary text-white p-6 text-center relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-0 w-20 h-20 rounded-full bg-white -mt-10 -ml-10"></div>
+        <div class="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-white -mb-16 -mr-16"></div>
+      </div>
+      <h1 class="text-[clamp(1.5rem,4vw,2.5rem)] font-bold relative z-10 text-shadow">
+        <i class="fa fa-key mr-2"></i>钥匙决策器
+      </h1>
+      <p class="mt-2 opacity-90 relative z-10">选择钥匙生成随机左右序列</p>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="p-6">
+      <!-- 钥匙选择区域 -->
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-4 text-center">选择钥匙类型</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="key-option key-hover cursor-pointer rounded-xl p-4 border-2 border-blueKey/30 bg-blueKey/10 text-center" data-count="5">
+            <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-blueKey flex items-center justify-center text-white text-xl">
+              <i class="fa fa-key"></i>
+            </div>
+            <p class="font-medium">蓝钥匙</p>
+            <p class="text-sm text-gray-500">5次</p>
+          </div>
+          
+          <div class="key-option key-hover cursor-pointer rounded-xl p-4 border-2 border-purpleKey/30 bg-purpleKey/10 text-center" data-count="6">
+            <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-purpleKey flex items-center justify-center text-white text-xl">
+              <i class="fa fa-key"></i>
+            </div>
+            <p class="font-medium">紫钥匙</p>
+            <p class="text-sm text-gray-500">6次</p>
+          </div>
+          
+          <div class="key-option key-hover cursor-pointer rounded-xl p-4 border-2 border-goldKey/30 bg-goldKey/10 text-center" data-count="7">
+            <div class="w-12 h-12 mx-auto mb-2 rounded-full bg-goldKey flex items-center justify-center text-white text-xl">
+              <i class="fa fa-key"></i>
+            </div>
+            <p class="font-medium">金钥匙</p>
+            <p class="text-sm text-gray-500">7次</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 额外次数按钮 -->
+      <div class="mb-4 text-center">
+        <button id="extra-btn" class="px-6 py-2 bg-accent/10 hover:bg-accent/20 text-accent font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <i class="fa fa-plus-circle"></i>
+          <span>额外次数</span>
+        </button>
+      </div>
+
+      <!-- 额外结果显示区域 - 位于生成按钮上方 -->
+      <div id="extra-result" class="text-center my-4 min-h-[60px]">
+        <!-- 额外生成的单个结果将显示在这里 -->
+      </div>
+
+      <!-- 生成按钮 -->
+      <button id="decision-btn" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group mb-6">
+        <i class="fa fa-magic text-lg group-hover:rotate-12 transition-transform duration-300"></i>
+        <span class="text-xl">生成序列</span>
+      </button>
+
+      <!-- 当前次数显示 -->
+      <div class="text-center mb-6">
+        <p class="text-gray-500">生成次数: <span id="current-count" class="font-semibold text-primary">0</span></p>
+      </div>
+
+      <!-- 结果显示区域 -->
+      <div id="result-container" class="flex flex-wrap justify-center items-center gap-2 md:gap-3 my-6 min-h-[80px]">
+        <!-- 结果字符将在这里动态生成 -->
+      </div>
+
+      <!-- 说明文字 -->
+      <div class="mt-4 text-center text-gray-500 text-sm">
+        <div class="flex justify-center gap-6">
+          <p class="flex items-center gap-1">
+            <span class="w-4 h-4 rounded-full bg-left/20 inline-block"></span>
+            左 - 绿色
+          </p>
+          <p class="flex items-center gap-1">
+            <span class="w-4 h-4 rounded-full bg-right/20 inline-block"></span>
+            右 - 黄色
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部装饰 -->
+    <div class="h-2 bg-gradient-to-r from-blueKey via-purpleKey to-goldKey"></div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="mt-8 text-center text-grey-500 text-sm">
+    <p>钥匙决策器 &copy; 卡门-哈库纳玛塔塔丶</p>
+  </footer>
+
+  <script>
+    // 获取DOM元素
+    const decisionBtn = document.getElementById('decision-btn');
+    const extraBtn = document.getElementById('extra-btn');
+    const resultContainer = document.getElementById('result-container');
+    const extraResult = document.getElementById('extra-result');
+    const currentCountEl = document.getElementById('current-count');
+    const keyOptions = document.querySelectorAll('.key-option');
+    
+    // 变量初始化
+    let selectedCount = 0;
+    let activeKey = null;
+
+    // 钥匙选择事件
+    keyOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        // 移除其他钥匙的选中状态
+        keyOptions.forEach(opt => {
+          opt.classList.remove('ring-2', 'ring-offset-2');
+        });
+        
+        // 设置当前选中钥匙
+        option.classList.add('ring-2', 'ring-offset-2');
+        if (option.dataset.count === "5") {
+          option.classList.add('ring-blueKey');
+        } else if (option.dataset.count === "6") {
+          option.classList.add('ring-purpleKey');
+        } else {
+          option.classList.add('ring-goldKey');
+        }
+        
+        // 更新选中次数
+        selectedCount = parseInt(option.dataset.count);
+        currentCountEl.textContent = selectedCount;
+        
+        // 启用按钮
+        decisionBtn.disabled = false;
+        decisionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        extraBtn.disabled = false;
+        extraBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        
+        activeKey = option;
+      });
+    });
+
+    // 额外次数按钮事件 - 直接生成一个随机结果
+    extraBtn.addEventListener('click', () => {
+      if (activeKey) {
+        // 创建结果元素
+        const resultBox = document.createElement('div');
+        resultBox.className = 'w-12 h-12 mx-auto bg-gray-100 rounded-lg flex items-center justify-center text-2xl font-bold transition-all duration-300 scale-90 opacity-0';
+        
+        // 清空现有额外结果
+        extraResult.innerHTML = '';
+        extraResult.appendChild(resultBox);
+        
+        // 随机选择"左"或"右"
+        const choice = Math.random() > 0.5 ? '左' : '右';
+        
+        // 添加延迟以显示动画效果
+        setTimeout(() => {
+          resultBox.textContent = choice;
+          resultBox.classList.remove('scale-90', 'opacity-0', 'bg-gray-100');
+          
+          // 设置颜色
+          if (choice === '左') {
+            resultBox.classList.add('bg-left/20', 'text-left');
+          } else {
+            resultBox.classList.add('bg-right/20', 'text-right');
+          }
+          
+          // 添加弹出动画
+          resultBox.classList.add('animate-float');
+          setTimeout(() => {
+            resultBox.classList.remove('animate-float');
+          }, 1000);
+        }, 150);
+        
+        // 添加按钮动画
+        extraBtn.classList.add('scale-95');
+        setTimeout(() => {
+          extraBtn.classList.remove('scale-95');
+        }, 200);
+      }
+    });
+
+    // 生成随机左右字符序列的函数
+    function generateDecision() {
+      if (selectedCount <= 0) return;
+      
+      // 清空现有结果和额外结果
+      resultContainer.innerHTML = '';
+      extraResult.innerHTML = '';
+      
+      // 创建新的结果框
+      for (let i = 0; i < selectedCount; i++) {
+        const box = document.createElement('div');
+        box.className = 'w-10 h-10 md:w-14 md:h-14 bg-gray-100 rounded-lg flex items-center justify-center text-2xl md:text-3xl font-bold transition-all duration-300 scale-90 opacity-0';
+        resultContainer.appendChild(box);
+      }
+      
+      const resultBoxes = resultContainer.querySelectorAll('div');
+      
+      // 延迟生成结果，增强视觉效果
+      setTimeout(() => {
+        resultBoxes.forEach((box, index) => {
+          // 每个字符依次出现，增加动画层次感
+          setTimeout(() => {
+            // 随机选择"左"或"右"
+            const choice = Math.random() > 0.5 ? '左' : '右';
+
+            // 设置字符和样式
+            box.textContent = choice;
+            box.classList.remove('scale-90', 'opacity-0', 'bg-gray-100');
+
+            // 根据字符设置不同颜色：左-绿色，右-黄色
+            if (choice === '左') {
+              box.classList.add('bg-left/20', 'text-left');
+            } else {
+              box.classList.add('bg-right/20', 'text-right');
+            }
+
+            // 添加弹出动画
+            box.classList.add('animate-float');
+            setTimeout(() => {
+              box.classList.remove('animate-float');
+            }, 1000);
+
+          }, index * 150); // 每个字符间隔150ms出现
+        });
+      }, 300);
+    }
+
+    // 为生成按钮添加点击事件
+    decisionBtn.addEventListener('click', () => {
+      if (selectedCount <= 0) return;
+      
+      // 添加按钮点击动画
+      decisionBtn.classList.add('scale-95');
+      setTimeout(() => {
+        decisionBtn.classList.remove('scale-95');
+      }, 200);
+
+      // 生成决策结果
+      generateDecision();
+    });
+  </script>
+</body>
+
+</html>
