@@ -69,10 +69,13 @@
         background: transparent; 
       }
 
-      /* 背景图样式 */
+      /* 背景图过渡动画 */
       body {
-        background: url('https://cdn-lostark.game.onstove.com/uploadfiles/banner/d7ad1b3cf22c48bb9e8a7b68bf57a99e.jpg') no-repeat center center fixed; 
-        background-size: cover; 
+        transition: background-image 1s ease-in-out;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
       }
 
       /* 主容器动画 */
@@ -92,14 +95,14 @@
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center p-4 font-sans text-neutral bg-gray-50">
-  <!-- 新增：没钥匙了 按钮 -->
-  <button id="toggle-btn" class="mb-4 px-6 py-2 bg-gray-700 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 font-sans text-neutral bg-gray-50 relative">
+  <!-- 没钥匙了 按钮 - 调整到左上方 -->
+  <button id="toggle-btn" class="absolute top-4 left-4 px-6 py-2 bg-gray-700 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 z-10">
     <i class="fa fa-eye-slash"></i>
     <span>没钥匙了，看看图</span>
   </button>
 
-  <!-- 页面容器 - 添加了main-container类用于控制显示隐藏 -->
+  <!-- 页面容器 -->
   <div class="main-container max-w-lg w-full bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
     <!-- 标题区域 -->
     <div class="bg-primary text-white p-6 text-center relative overflow-hidden">
@@ -196,9 +199,36 @@
   <!-- 页脚 -->
   <footer class="mt-8 text-center text-grey-500 text-sm">
     <p>选择特困生急救丸 &copy; 卡门-哈库纳玛塔塔丶</p>
+    <p>图片资源均来自韩服官网，请勿商用</p>
   </footer>
 
   <script>
+    // 背景图链接数组 - 请替换为您的实际图片链接
+    const backgroundImages = [
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/d7ad1b3cf22c48bb9e8a7b68bf57a99e.jpg',
+      // 在这里添加更多背景图链接
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/636597236436495124.jpg',
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/73a823033de7497e9ea6f633c3052c87.jpg',
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/636391621594442792.jpg',
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/636391679362184994.jpg',
+      'https://cdn-lostark.game.onstove.com/uploadfiles/banner/636391679722672325.jpg',
+      'https://d3kxs6kpbh59hp.cloudfront.net/community/COMMUNITY/5047a221265b4bb0bada2e1e432678e2/6140c92ea8844ceeb61e7fccf748e41f_1559464998.jpg',
+      
+      
+      
+      // 'https://example.com/background3.jpg',
+    ];
+
+    // 随机选择背景图并应用
+    function setRandomBackground() {
+      const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+      const selectedImage = backgroundImages[randomIndex];
+      document.body.style.backgroundImage = `url('${selectedImage}')`;
+    }
+
+    // 页面加载时设置随机背景
+    window.addEventListener('load', setRandomBackground);
+
     // 获取DOM元素
     const decisionBtn = document.getElementById('decision-btn');
     const extraBtn = document.getElementById('extra-btn');
@@ -348,14 +378,14 @@
       generateDecision();
     });
 
-    // 新增：隐藏/展示主容器的按钮事件
+    // 隐藏/展示主容器的按钮事件
     toggleBtn.addEventListener('click', () => {
       isHidden = !isHidden;
       
       // 切换主容器显示状态
       if (isHidden) {
         mainContainer.classList.add('hidden');
-        toggleBtn.innerHTML = '<i class="fa fa-eye"></i><span>有钥匙了，一会再来看</span>';
+        toggleBtn.innerHTML = '<i class="fa fa-eye"></i><span>有钥匙了</span>';
       } else {
         mainContainer.classList.remove('hidden');
         toggleBtn.innerHTML = '<i class="fa fa-eye-slash"></i><span>没钥匙了，看看图</span>';
